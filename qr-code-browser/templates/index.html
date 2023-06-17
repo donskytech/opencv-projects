@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>OpenCV QR Code Application</title>
+    <!-- <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" href="./favicon.ico" type="image/x-icon" /> -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+      integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      .center {
+        text-align: center;
+      }
+      .status {
+        color: #fff;
+        padding: 1rem;
+      }
+      .message {
+        font-size: 2.5rem;
+      }
+      .message-info {
+        background-color: rgb(89, 46, 245);
+      }
+      .message-allowed {
+        background-color: green;
+      }
+      .message-denied {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="center">
+      <div>
+        <img src="{{url_for('video')}}" width="640" height="480" />
+      </div>
+      <div class="status">
+        <h1 id="message" class="message message-info">SCAN YOUR QR CODE</h1>
+      </div>
+    </main>
+    <script>
+      window.addEventListener("DOMContentLoaded", (event) => {
+        console.log("DOM fully loaded and parsed");
+        const message = document.querySelector("#message");
+        var socket = io.connect();
+
+        //receive details from server
+        socket.on("scan_result", function (msg) {
+          if (msg.status === "denied") {
+            console.log("Access Denied");
+            message.innerHTML = msg.message;
+            message.classList.remove("message-allowed");
+            message.classList.remove("message-info");
+            message.classList.add("message-denied");
+          } else if (msg.status === "granted") {
+            console.log("Access Granted");
+            message.innerHTML = msg.message;
+            message.classList.remove("message-denied");
+            message.classList.remove("message-info");
+            message.classList.add("message-allowed");
+          } else {
+            message.innerHTML = msg.message;
+            message.classList.remove("message-denied");
+            message.classList.remove("message-allowed");
+            message.classList.add("message-info");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
