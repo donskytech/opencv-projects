@@ -29,13 +29,13 @@ def generate_frames(camera):
             if myData in myDataDB:
                 socketio.emit(
                     "scan_result",
-                    {"status": "granted", "message": "Access Granted"},
+                    {"status": "granted", "message": f"Student ID : {myData}"},
                 )
                 is_granted = True
             else:
                 print("Not found in the database!")
                 socketio.emit(
-                    "scan_result", {"status": "denied", "message": "Access Denied"}
+                    "scan_result", {"status": "denied", "message": f"Student ID : {myData}"}
                 )
                 is_denied = True
             QRScanner.add_box_to_qr_code(image, barcode)
